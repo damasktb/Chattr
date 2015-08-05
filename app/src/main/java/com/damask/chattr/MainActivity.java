@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
                 for (DataSnapshot m : dataSnapshot.getChildren()) {
                     current = m.getValue(ChatMessage.class);
                     messenger.add(current);
-                    Log.i("User", current.getmText());
+
                 }
                 ad.notifyDataSetChanged();
             }
@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
         String message = textField.getText().toString();
 
         if (message.length()>0) {
-            rootRef.child("messages").push().setValue(new ChatMessage("Damask", message));
+            rootRef.child("messages").push().setValue(new ChatMessage("User", message));
             textField.setText("");
         }
     }
@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
         }
         @Override
         public Object getItem(int position) {
-            return messenger.get(position%messenger.size());
+            return messenger.get(position);
         }
         @Override
         public long getItemId(int position) {
@@ -118,8 +118,8 @@ public class MainActivity extends ActionBarActivity {
                 tv.setTextSize(15);
                 tv.setPadding(5, 5, 5, 5);
             }
-            String user = messenger.get(position%messenger.size()).getmUser();
-            String messageBody = messenger.get(position%messenger.size()).getmText();
+            String user = messenger.get(position).getmUser();
+            String messageBody = messenger.get(position).getmText();
             tv.setText(user + ": " + messageBody);
             return tv;
         }
