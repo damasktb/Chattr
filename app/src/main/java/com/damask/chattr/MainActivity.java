@@ -1,43 +1,24 @@
 package com.damask.chattr;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -57,7 +38,6 @@ public class MainActivity extends ActionBarActivity {
         lv.setAdapter(ad);
 
         Firebase.setAndroidContext(this);
-        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         rootRef = new Firebase("https://dazzling-heat-7847.firebaseio.com");
 
         rootRef.child("quotes").keepSynced(true);
@@ -75,8 +55,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
+            public void onCancelled(FirebaseError firebaseError) {}
         });
 
     }
@@ -150,8 +129,7 @@ public class MainActivity extends ActionBarActivity {
             holder.username.setText(message.getAuthor());
             holder.messageBody.setText(message.getTitle());
             holder.timestamp.setText(message.getDate());
-            holder.avatar.setImageBitmap(null);
-
+            Picasso.with(MainActivity.this).load(message.getPicUrl()).into(holder.avatar);
 
             return view;
         }
