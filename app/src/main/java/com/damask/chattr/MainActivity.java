@@ -1,17 +1,30 @@
 package com.damask.chattr;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +33,11 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -39,10 +57,11 @@ public class MainActivity extends ActionBarActivity {
         lv.setAdapter(ad);
 
         Firebase.setAndroidContext(this);
-        rootRef = new Firebase("https://brilliant-inferno-9405.firebaseio.com");
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
+        rootRef = new Firebase("https://dazzling-heat-7847.firebaseio.com");
 
-        rootRef.child("messages").keepSynced(true);
-        rootRef.child("messages").addValueEventListener(new ValueEventListener() {
+        rootRef.child("quotes").keepSynced(true);
+        rootRef.child("quotes").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -51,13 +70,13 @@ public class MainActivity extends ActionBarActivity {
                 for (DataSnapshot m : dataSnapshot.getChildren()) {
                     current = m.getValue(ChatMessage.class);
                     messenger.add(current);
-
                 }
                 ad.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
 
     }
@@ -84,15 +103,16 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendMessage(View v) {
-        EditText textField = (EditText) findViewById(R.id.textField);
-        String message = textField.getText().toString();
-
-        if (message.length()>0) {
-            rootRef.child("messages").push().setValue(new ChatMessage("User", message));
-            textField.setText("");
-        }
-    }
+//    public void sendMessage(View v) {
+//        EditText textField = (EditText) findViewById(R.id.textField);
+//        String message = textField.getText().toString();
+//
+//        if (message.length()>0) {
+//            String timestamp = new Timestamp(new java.util.Date().getTime()).toString();
+//            rootRef.child("quotes").push().setValue(new ChatMessage("Damask", timestamp, message, null));
+//            textField.setText("");
+//        }
+//    }
 
 
     public class MyAdapter extends BaseAdapter {
@@ -110,19 +130,39 @@ public class MainActivity extends ActionBarActivity {
         }
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView tv;
-            if(convertView!=null ){
-                tv=(TextView)convertView;
-            }else {
-                tv = new TextView(MainActivity.this);
-                tv.setTextSize(15);
-                tv.setPadding(5, 5, 5, 5);
+            View view;
+            ViewHolder holder;
+
+            if(convertView==null){
+                view = LayoutInflater.from(MainActivity.this).inflate(R.layout.list_item, null);
+                holder = new ViewHolder();
+                holder.avatar = (ImageView) view.findViewById(R.id.avatar);
+                holder.messageBody = (TextView) view.findViewById(R.id.messageBody);
+                holder.timestamp = (TextView) view.findViewById(R.id.timestamp);
+                holder.username = (TextView) view.findViewById(R.id.username);
+                view.setTag(holder);
+            } else {
+                view = convertView;
+                holder = (ViewHolder) view.getTag();
             }
-            String user = messenger.get(position).getmUser();
-            String messageBody = messenger.get(position).getmText();
-            tv.setText(user + ": " + messageBody);
-            return tv;
+
+            ChatMessage message = messenger.get(position);
+            holder.username.setText(message.getAuthor());
+            holder.messageBody.setText(message.getTitle());
+            holder.timestamp.setText(message.getDate());
+            holder.avatar.setImageBitmap(null);
+
+
+            return view;
         }
     }
+
+    private class ViewHolder {
+        TextView messageBody;
+        TextView username;
+        TextView timestamp;
+        ImageView avatar;
+    }
+
 
 }

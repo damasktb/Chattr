@@ -5,33 +5,27 @@ package com.damask.chattr;
  */
 public class ChatMessage {
 
-    private String mUser;
-    private String mText;
-    private Long mTimeStamp;
-    public ChatMessage(String mUser, String mText) {
-        this.mUser = mUser;
-        this.mText = mText;
-    }
-    public String getmUser() {
-        return mUser;
-    }
-    public void setmUser(String mUser) {
-        this.mUser = mUser;
-    }
-    public String getmText() {
-        return mText;
-    }
-    public void setmText(String mText) {
-        this.mText = mText;
-    }
-    public Long getmTimeStamp() {
-        return mTimeStamp;
-    }
-    public void setmTimeStamp(Long mTimeStamp) {
-        this.mTimeStamp = mTimeStamp;
+    private String author;
+    private String date;
+    private String picUrl;
+    private String title;
+
+    public ChatMessage(String author, String date, String picUrl, String title) {
+        this.author = author;
+        this.date = date;
+        this.picUrl = picUrl;
+        this.title = title;
     }
 
-    public ChatMessage() {
+    public String getAuthor() {return author;}
+    public String getDate() {return date;}
+    public String getPicUrl() {return picUrl;}
+    public String getTitle() {return title;}
 
-    }
+    public void setAuthor(String author) {this.author = author;}
+    public void setDate(String date) {this.date = date;}
+    public void setPicUrl(String picUrl) {this.picUrl = picUrl;}
+    public void setTitle(String title) {this.title = title;}
+
+    public ChatMessage() {}
 }
